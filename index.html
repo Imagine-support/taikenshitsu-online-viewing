@@ -162,31 +162,45 @@
 </div>
 
 <script>
-  // ここに②で確認した、本来のデプロイURLを入れてください
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxsbFeZuCZoo7_O9p9noNW-Cg8vSCMf92ypv4Z2TqGnFqkjLmiKzfH1m1mBwcI3GkNnFQ/exec";
+  // ▼▼▼ 修正箇所：正しい固定デプロイURLに変更 ▼▼▼
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxsbFeZuCZoo7_O9p9noNW-Cg8vSCMf92ypv4Z2TqGnFqkjLmiKzfH1m1mBwcI3GkNnFQ/exec";
 
-let allData = [], groupedData = {}, currentGroup = [], currentIndex = 0;
-let mScale = 1, mOffsetX = 0, mOffsetY = 0, mIsDragging = false, mStartX, mStartY, mInitialDist = 0;
+  let allData = [], groupedData = {}, currentGroup = [], currentIndex = 0;
+  let mScale = 1, mOffsetX = 0, mOffsetY = 0, mIsDragging = false, mStartX, mStartY, mInitialDist = 0;
 
-window.onload = function() {
-  history.replaceState({ type: 'tab', floor: '外観' }, '');
-  loadDataJSONP();
-};
-    fetch(GAS_API_URL).then(res => res.json()).then(data => {
+  window.onload = function() {
+    history.replaceState({ type: 'tab', floor: '外観' }, '');
+    loadDataJSONP();
+  };
+
+  // ▼▼▼ 修正箇所：fetch()の代わりにJSONP方式で読み込む ▼▼▼
+  function loadDataJSONP() {
+    const callbackName = 'handleGasData';
+
+    window[callbackName] = function(data) {
       let cleanData = data.filter(r => r[1] && r[3]);
       cleanData.sort((a, b) => a[1] === '外観' ? -1 : b[1] === '外観' ? 1 : a[1].localeCompare(b[1], undefined, {numeric:true}));
-      allData = cleanData; 
-      processData(allData); 
-      renderMarkers(); 
-      renderFloorThumbs(allData); 
+      allData = cleanData;
+      processData(allData);
+      renderMarkers();
+      renderFloorThumbs(allData);
       initMapControls();
 
-      // ▼▼▼ 修正箇所：すべての描画が終わったらローディングを消す ▼▼▼
       const loader = document.getElementById('loading-screen');
       loader.style.opacity = '0';
       setTimeout(() => { loader.style.visibility = 'hidden'; }, 500);
-    });
-  };
+
+      delete window[callbackName];
+      document.body.removeChild(scriptTag);
+    };
+
+    const scriptTag = document.createElement('script');
+    scriptTag.src = GAS_API_URL + '?callback=' + callbackName;
+    scriptTag.onerror = function() {
+      document.querySelector('.loading-text').innerText = 'データの読み込みに失敗しました。時間をおいて再度お試しください。';
+    };
+    document.body.appendChild(scriptTag);
+  }
 
   window.onpopstate = function(event) {
     if (!event.state) return;
