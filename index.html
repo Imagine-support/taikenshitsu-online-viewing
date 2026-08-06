@@ -162,14 +162,16 @@
 </div>
 
 <script>
-  const GAS_API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhXGnzIC2gE5UyWBguvXvQ67TDlhntpzzdh9Q4nV9kcwXOPo9XNaMj5WGE1J4U3PicNCAmqKRGZ1RVHQgSAcgX4JDJ23y3eFt7p0B_dVYQvCdG1ryQPBJ0SGUIZ2CNvhPD9WOlt523372OmzLxU2eYZ7nHqu4PS3pA-vutv_1L-i3b3UVJRoKcn0Zc_5v6wXYfQoZzG31Hnm5bN1s_BJ1VXrfh_78JKLSvY5ac4Np-VLiC1voGOj41k7yHVEhJ52ywmg39W43CMRhWcH_kFJKBzlRqnouNkX5b_Lxey&lib=Mp76_62xJm8fQqCNSnmRDrlyIfNZbfkjO";
+  // ここに②で確認した、本来のデプロイURLを入れてください
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxsbFeZuCZoo7_O9p9noNW-Cg8vSCMf92ypv4Z2TqGnFqkjLmiKzfH1m1mBwcI3GkNnFQ/exec";
 
-  let allData = [], groupedData = {}, currentGroup = [], currentIndex = 0;
-  let mScale = 1, mOffsetX = 0, mOffsetY = 0, mIsDragging = false, mStartX, mStartY, mInitialDist = 0;
+let allData = [], groupedData = {}, currentGroup = [], currentIndex = 0;
+let mScale = 1, mOffsetX = 0, mOffsetY = 0, mIsDragging = false, mStartX, mStartY, mInitialDist = 0;
 
-  window.onload = function() {
-    history.replaceState({ type: 'tab', floor: '外観' }, '');
-
+window.onload = function() {
+  history.replaceState({ type: 'tab', floor: '外観' }, '');
+  loadDataJSONP();
+};
     fetch(GAS_API_URL).then(res => res.json()).then(data => {
       let cleanData = data.filter(r => r[1] && r[3]);
       cleanData.sort((a, b) => a[1] === '外観' ? -1 : b[1] === '外観' ? 1 : a[1].localeCompare(b[1], undefined, {numeric:true}));
