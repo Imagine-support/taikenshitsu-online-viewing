@@ -38,10 +38,21 @@
     .loading-text { color: #666; font-size: 0.9rem; }
     /* ▲▲▲ ここまで ▲▲▲ */
 
-    .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    .tab-btn { padding: 10px 20px; cursor: pointer; border: 1px solid #007BBB; background: white; border-radius: 5px; font-weight: bold; transition: 0.3s; flex: 1; min-width: 70px; text-align: center;}
-    .tab-btn.active { background: #007BBB; color: white; }
-    .map-outer-frame { width: 100%; height: 75vh; background: #eee; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
+    .tabs-guide { text-align: center; margin: 0 0 10px 0; color: #444; font-size: 0.95rem; font-weight: bold; }
+    .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: stretch; }
+    .tab-btn { padding: 8px 6px 10px; cursor: pointer; border: 2px solid #cfe0ea; background: white; border-radius: 8px; font-weight: bold; transition: 0.2s; flex: 1; min-width: 78px; max-width: 190px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 7px; }
+    .tab-thumb { width: 100%; height: 82px; object-fit: contain; background: #fff; border-radius: 4px; pointer-events: none; }
+    .tab-label { font-size: 0.95rem; line-height: 1; }
+    .tab-sep { margin-right: 16px; }
+    .tab-btn:hover { border-color: #007BBB; box-shadow: 0 3px 10px rgba(0,0,0,0.13); }
+    .tab-btn.active { background: #007BBB; color: white; border-color: #007BBB; }
+    .tab-btn.active .tab-thumb { background: #fff; padding: 2px; box-sizing: border-box; }
+
+    .zoom-controls { position: absolute; right: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
+    .zoom-controls button { width: 40px; height: 40px; padding: 0; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); background: rgba(255,255,255,0.95); color: #007BBB; font-size: 20px; font-weight: bold; line-height: 1; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
+    .zoom-controls button:hover:not(:disabled) { background: #007BBB; color: #fff; }
+    .zoom-controls button:disabled { opacity: 0.35; cursor: default; }
+    .map-outer-frame { touch-action: pan-y; width: 100%; height: 75vh; background: #eee; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; }
     .map-wrapper { position: absolute; display: none; width: 100%; height: 100%; align-items: center; justify-content: center; }
     .map-wrapper.active { display: flex; }
     .map-img-container { position: relative; display: inline-block; line-height: 0; }
@@ -89,6 +100,13 @@
     .tel-link { color: inherit; text-decoration: none; cursor: default; }
 
     @media (max-width: 768px) {
+      .tabs-guide { font-size: 0.8rem; }
+      .tab-sep { margin-right: 8px; }
+      .tabs { gap: 6px; }
+      .tab-btn { padding: 6px 3px 8px; min-width: 62px; gap: 4px; }
+      .tab-thumb { height: 52px; }
+      .tab-label { font-size: 0.8rem; }
+      .zoom-controls button { width: 36px; height: 36px; font-size: 18px; }
       .marker { width: 16px !important; height: 16px !important; font-size: 10px !important; }
       .marker-badge { width: 11px !important; height: 11px !important; font-size: 8px !important; line-height: 11px !important; top: -6px !important; right: -6px !important; }
       .img-container { height: 50vh; }
@@ -115,11 +133,12 @@
     </div>
   </div>
 
+  <p class="tabs-guide">▼ 外観・各階の間取り図</p>
   <div class="tabs">
-    <div class="tab-btn active" data-floor="外観" onclick="handleTabClick('外観')">外観</div>
-    <div class="tab-btn" data-floor="1F" onclick="handleTabClick('1F')">1階</div>
-    <div class="tab-btn" data-floor="2F" onclick="handleTabClick('2F')">2階</div>
-    <div class="tab-btn" data-floor="3F" onclick="handleTabClick('3F')">3階</div>
+    <div class="tab-btn tab-sep active" data-floor="外観" onclick="handleTabClick('外観')"><img class="tab-thumb" src="IMG_7016.jpeg" alt=""><span class="tab-label">外観</span></div>
+    <div class="tab-btn" data-floor="1F" onclick="handleTabClick('1F')"><img class="tab-thumb" src="IMG_1818.JPG" alt=""><span class="tab-label">1階</span></div>
+    <div class="tab-btn" data-floor="2F" onclick="handleTabClick('2F')"><img class="tab-thumb" src="IMG_1825.jpeg" alt=""><span class="tab-label">2階</span></div>
+    <div class="tab-btn" data-floor="3F" onclick="handleTabClick('3F')"><img class="tab-thumb" src="IMG_1822.jpeg" alt=""><span class="tab-label">3階</span></div>
   </div>
 
   <div class="map-outer-frame" id="map-parent-frame">
@@ -127,8 +146,13 @@
     <div id="map-1F" class="map-wrapper"><div class="map-img-container"><img src="IMG_1818.JPG" class="map-img"><div id="markers-1F"></div></div></div>
     <div id="map-2F" class="map-wrapper"><div class="map-img-container"><img src="IMG_1825.jpeg" class="map-img"><div id="markers-2F"></div></div></div>
     <div id="map-3F" class="map-wrapper"><div class="map-img-container"><img src="IMG_1822.jpeg" class="map-img"><div id="markers-3F"></div></div></div>
+    <div class="zoom-controls">
+      <button id="map-zoom-in" onclick="mapZoom(1.5)" title="拡大" aria-label="拡大">＋</button>
+      <button id="map-zoom-out" onclick="mapZoom(1/1.5)" title="縮小" aria-label="縮小">－</button>
+      <button id="map-zoom-reset" onclick="mapZoomReset()" title="元の大きさに戻す" aria-label="元の大きさに戻す" style="font-size:16px;">⟲</button>
+    </div>
   </div>
-  <p style="text-align:center; font-size: 0.8rem; color: #888; margin-top: 8px;">※間取り図は指で拡大・移動できます</p>
+  <p style="text-align:center; font-size: 0.8rem; color: #888; margin-top: 8px; line-height: 1.7;">※パソコン：クリックで拡大／右下の ＋ － ⟲ ボタン／拡大中はホイールで拡大縮小・ドラッグで移動<br>スマートフォン：ピンチ操作で拡大・移動</p>
 
   <div class="thumb-section">
     <h3>写真一覧（フロア別）</h3>
@@ -145,13 +169,18 @@
 </div>
 
 <div id="viewer" class="modal" onclick="requestCloseViewer()">
-  <span class="close-btn" onclick="requestCloseViewer()">×</span>
+  <span class="close-btn" onclick="event.stopPropagation(); requestCloseViewer()">×</span>
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="img-container">
       <div id="slider-track" class="slider-track"></div>
       <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
       <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
       <div id="v-counter" class="slide-counter"></div>
+      <div class="zoom-controls">
+        <button id="view-zoom-in" onclick="viewerZoom(1.5)" title="拡大" aria-label="拡大">＋</button>
+        <button id="view-zoom-out" onclick="viewerZoom(1/1.5)" title="縮小" aria-label="縮小">－</button>
+        <button id="view-zoom-reset" onclick="viewerZoomReset()" title="元の大きさに戻す" aria-label="元の大きさに戻す" style="font-size:16px;">⟲</button>
+      </div>
     </div>
     <div class="modal-text">
       <span id="v-floor" style="background:#eee; padding:2px 8px; border-radius:4px; font-size:12px;"></span>
@@ -213,15 +242,23 @@
   };
 
   function handleTabClick(f) {
+    const cur = document.querySelector('.tab-btn.active');
+    if (cur && cur.dataset.floor === f) { mapZoomReset(); return; }
     history.pushState({ type: 'tab', floor: f }, '');
     executeSwitchFloor(f);
   }
 
   function executeSwitchFloor(f) {
+    // 写真を閉じたときもこの関数を通る（履歴が同じ階の状態に戻るため）。
+    // 階が変わっていないなら拡大状態を維持し、見ていた位置に戻れるようにする。
+    const cur = document.querySelector('.tab-btn.active');
+    const floorChanged = !cur || cur.dataset.floor !== f;
     document.querySelectorAll('.map-wrapper, .tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById('map-' + f).classList.add('active');
     document.querySelector(`.tab-btn[data-floor="${f}"]`).classList.add('active');
-    mScale = 1; mOffsetX = 0; mOffsetY = 0; applyMapTransform();
+    if (floorChanged) { mScale = 1; mOffsetX = 0; mOffsetY = 0; }
+    applyMapTransform();
+    updateZoomButtons();
   }
 
   function openViewer(gk, idx, all) {
@@ -230,17 +267,29 @@
     buildSlider(); updateViewerInfo();
     document.getElementById('viewer').style.display = 'flex';
     document.body.classList.add('modal-open');
+    resetZoomParams();
     applyTransform();
+    updateViewerZoomButtons();
   }
 
+  // 修正：×のクリックが親要素(#viewer)にも伝わり history.back() が2回実行されていた。
+  // ×側で伝播を止めたうえで、連打などによる二重実行もフラグで防ぐ。
+  let isClosingViewer = false;
+
   function requestCloseViewer() {
+    if (isClosingViewer) return;
+    if (document.getElementById('viewer').style.display !== 'flex') return;
+    isClosingViewer = true;
+    setTimeout(() => { isClosingViewer = false; }, 800);
     history.back();
   }
 
   function executeCloseViewer() {
+    isClosingViewer = false;
     document.getElementById('viewer').style.display = 'none';
     document.body.classList.remove('modal-open');
     resetZoomParams();
+    updateViewerZoomButtons();
   }
 
   function initMapControls() {
@@ -258,6 +307,94 @@
       applyMapTransform();
     }, {passive:false});
     f.addEventListener('touchend', () => mIsDragging = false);
+    initMapMouseControls(f);
+    updateZoomButtons();
+  }
+
+  // 追加：パソコン（マウス）での間取り図の拡大・移動
+  // 室内写真ビューアと操作を揃えている（クリックで拡大／ホイールで変倍／ドラッグで移動）
+  const MAP_MAX_SCALE = 4;
+  const ZOOM_STEP = 1.5;
+  // タッチ端末ではピンチ操作があるため、クリック拡大はマウス環境だけで有効にする
+  // （タッチで有効にすると、マーカーを狙ったタップが外れたときに勝手に拡大してしまう）
+  const IS_MOUSE_DEVICE = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+  let mapDragging = false;
+
+  function mapZoom(factor) {
+    mScale = Math.min(Math.max(1, mScale * factor), MAP_MAX_SCALE);
+    applyMapTransform();
+    updateZoomButtons();
+  }
+
+  function updateMapCursor() {
+    const f = document.getElementById('map-parent-frame');
+    if (!f) return;
+    if (!IS_MOUSE_DEVICE) { f.style.cursor = ''; return; }
+    f.style.cursor = mapDragging ? 'grabbing'
+      : (mScale >= MAP_MAX_SCALE - 0.001 ? 'grab' : 'zoom-in');
+  }
+
+  function mapZoomReset() {
+    mScale = 1; mOffsetX = 0; mOffsetY = 0;
+    applyMapTransform();
+    updateZoomButtons();
+  }
+
+  function updateZoomButtons() {
+    const zi = document.getElementById('map-zoom-in');
+    const zo = document.getElementById('map-zoom-out');
+    const zr = document.getElementById('map-zoom-reset');
+    if (zi) zi.disabled = mScale >= MAP_MAX_SCALE - 0.001;
+    if (zo) zo.disabled = mScale <= 1.001;
+    if (zr) zr.disabled = mScale <= 1.001;
+  }
+
+  function initMapMouseControls(f) {
+    let down = false, sx = 0, sy = 0, moved = false;
+
+    f.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      down = true; moved = false;
+      sx = e.clientX - mOffsetX; sy = e.clientY - mOffsetY;
+      if (mScale > 1) e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!down || mScale <= 1) return;
+      const nx = e.clientX - sx, ny = e.clientY - sy;
+      if (Math.abs(nx - mOffsetX) > 2 || Math.abs(ny - mOffsetY) > 2) {
+        moved = true;
+        if (!mapDragging) { mapDragging = true; updateMapCursor(); }
+      }
+      mOffsetX = nx; mOffsetY = ny;
+      applyMapTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      down = false;
+      if (mapDragging) { mapDragging = false; updateMapCursor(); }
+    });
+
+    // ドラッグで移動した直後のクリックで、マーカーが開いたり拡大したりするのを防ぐ。
+    // 抑止するのは直後の1回だけにして、フラグが残り続けないようにする。
+    f.addEventListener('click', e => {
+      if (moved) { moved = false; e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    // クリックで1段階拡大（マーカーは自身でクリックを止めているのでここには届かない）
+    f.addEventListener('click', e => {
+      if (!IS_MOUSE_DEVICE || moved) return;
+      if (e.target.closest('button')) return;
+      if (mScale >= MAP_MAX_SCALE - 0.001) return;
+      mapZoom(ZOOM_STEP);
+    });
+
+    // 等倍のときはページのスクロールを奪わない。拡大後はホイールで変倍する
+    f.addEventListener('wheel', e => {
+      if (!e.ctrlKey && mScale <= 1) return;
+      e.preventDefault();
+      mapZoom(e.deltaY < 0 ? 1.15 : 1 / 1.15);
+    }, { passive: false });
   }
 
   function applyMapTransform() {
@@ -269,6 +406,12 @@
       mOffsetX = Math.min(Math.max(mOffsetX, -lx), lx); mOffsetY = Math.min(Math.max(mOffsetY, -ly), ly);
     }
     t.style.transform = `translate(${mOffsetX}px, ${mOffsetY}px) scale(${mScale})`;
+    // ピンチ操作でもここを通るので、ボタンの有効・無効はこの1か所でまとめて更新する
+    updateZoomButtons();
+    updateMapCursor();
+    // 等倍のときは縦スクロールを妨げず、ブラウザ自身のピンチズームだけを止める。
+    // 拡大中は自前で移動を処理するため、ブラウザ側の操作をすべて無効にする。
+    f.style.touchAction = mScale > 1 ? 'none' : 'pan-y';
   }
 
   function processData(data) {
@@ -370,6 +513,8 @@
   }, {passive: true});
 
   function applyTransform() {
+    // ピンチ操作でもここを通るので、ボタンの有効・無効はこの1か所でまとめて更新する
+    updateViewerZoomButtons();
     const baseOffset = -currentIndex * 100;
     if (scale > 1) {
       const activeImg = track.children[currentIndex].querySelector('img');
@@ -384,6 +529,91 @@
   }
 
   function resetZoomParams() { scale = 1; dX = 0; dY = 0; cTransX = 0; Array.from(track.children).forEach(s => s.style.transform = 'scale(1)'); }
+
+  // 追加：写真ビューアのパソコン操作（拡大・移動・キーボード）
+  const VIEW_MAX_SCALE = 4;
+
+  function viewerZoom(factor) {
+    scale = Math.min(Math.max(1, scale * factor), VIEW_MAX_SCALE);
+    if (scale === 1) { dX = 0; dY = 0; }
+    applyTransform();
+    updateViewerZoomButtons();
+  }
+
+  function viewerZoomReset() {
+    resetZoomParams();
+    applyTransform();
+    updateViewerZoomButtons();
+  }
+
+  let viewDragging = false;
+
+  function updateViewerZoomButtons() {
+    const zi = document.getElementById('view-zoom-in');
+    const zo = document.getElementById('view-zoom-out');
+    const zr = document.getElementById('view-zoom-reset');
+    if (zi) zi.disabled = scale >= VIEW_MAX_SCALE - 0.001;
+    if (zo) zo.disabled = scale <= 1.001;
+    if (zr) zr.disabled = scale <= 1.001;
+    const c = document.querySelector('.img-container');
+    if (!c) return;
+    if (!IS_MOUSE_DEVICE) { c.style.cursor = ''; return; }
+    c.style.cursor = viewDragging ? 'grabbing'
+      : (scale >= VIEW_MAX_SCALE - 0.001 ? 'grab' : 'zoom-in');
+  }
+
+  (function initViewerMouseControls() {
+    const c = document.querySelector('.img-container');
+    if (!c) return;
+    let down = false, sx = 0, sy = 0, moved = false;
+
+    c.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      moved = false;
+      if (scale <= 1) return;
+      down = true; sx = e.clientX - dX; sy = e.clientY - dY;
+      e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!down) return;
+      const nx = e.clientX - sx, ny = e.clientY - sy;
+      if (Math.abs(nx - dX) > 2 || Math.abs(ny - dY) > 2) {
+        moved = true;
+        if (!viewDragging) { viewDragging = true; updateViewerZoomButtons(); }
+      }
+      dX = nx; dY = ny;
+      applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      down = false;
+      if (viewDragging) { viewDragging = false; updateViewerZoomButtons(); }
+    });
+
+    // クリックで1段階拡大（間取り図と同じ操作）
+    c.addEventListener('click', e => {
+      if (moved) { moved = false; return; }   // ドラッグ直後の1回だけ見送る
+      if (!IS_MOUSE_DEVICE) return;
+      if (e.target.closest('button')) return;
+      if (scale >= VIEW_MAX_SCALE - 0.001) return;
+      viewerZoom(ZOOM_STEP);
+    });
+
+    c.addEventListener('wheel', e => {
+      e.preventDefault();
+      viewerZoom(e.deltaY < 0 ? 1.15 : 1 / 1.15);
+    }, { passive: false });
+  })();
+
+  document.addEventListener('keydown', e => {
+    if (viewEl.style.display !== 'flex') return;
+    if (e.key === 'Escape') { requestCloseViewer(); }
+    else if (e.key === 'ArrowLeft') { changeSlide(-1); }
+    else if (e.key === 'ArrowRight') { changeSlide(1); }
+    else if (e.key === '+' || e.key === '=') { viewerZoom(ZOOM_STEP); }
+    else if (e.key === '-') { viewerZoom(1 / ZOOM_STEP); }
+  });
 </script>
 </body>
 </html>
