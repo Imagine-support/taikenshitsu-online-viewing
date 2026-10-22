@@ -428,7 +428,12 @@
       let w = document.getElementById(`markers-${r[1]}`); if (!w) return;
       let m = document.createElement('div'); m.className = 'marker';
       m.style.left = r[6] + '%'; m.style.top = r[7] + '%';
-      m.innerHTML = `<span style="transform: rotate(${r[8]||0}deg); display:inline-block;">➔</span>`;
+      // スプレッドシートの値はHTMLとして埋め込まない（数値以外が入っても無害にする）
+      let arrow = document.createElement('span');
+      arrow.style.display = 'inline-block';
+      arrow.style.transform = `rotate(${Number(r[8]) || 0}deg)`;
+      arrow.textContent = '➔';
+      m.appendChild(arrow);
       let gk = r[1] + "-" + r[4], g = groupedData[gk];
       if (g && g.length > 1) { let b = document.createElement('div'); b.className = 'marker-badge'; b.innerText = g.length; m.appendChild(b); }
       m.onclick = e => { e.stopPropagation(); openViewer(gk, 0, false); };
@@ -443,10 +448,15 @@
     data.forEach(r => { if (!fls[r[1]]) fls[r[1]] = []; fls[r[1]].push(r); });
     for (let f in fls) {
       let s = document.createElement('div'); s.style.marginBottom = "30px";
-      s.innerHTML = `<h4 style="border-left:5px solid #007BBB; padding-left:10px; margin-bottom:10px;">${f}</h4>`;
+      // 階名や画像パスはスプレッドシートの値なので、innerHTML ではなく文字・属性として設定する
+      let h = document.createElement('h4'); h.style = "border-left:5px solid #007BBB; padding-left:10px; margin-bottom:10px;";
+      h.textContent = f; s.appendChild(h);
       let g = document.createElement('div'); g.style = "display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:10px;";
       fls[f].forEach(r => {
-        let i = document.createElement('div'); i.innerHTML = `<img src="${r[3]}" style="width:100%; height:80px; object-fit:cover; border-radius:6px; cursor:pointer;">`;
+        let i = document.createElement('div');
+        let img = document.createElement('img'); img.src = r[3];
+        img.style = "width:100%; height:80px; object-fit:cover; border-radius:6px; cursor:pointer;";
+        i.appendChild(img);
         i.onclick = () => openViewer(null, allData.indexOf(r), true); g.appendChild(i);
       });
       s.appendChild(g); c.appendChild(s);
@@ -461,7 +471,10 @@
     currentGroup.forEach(item => {
       const div = document.createElement('div');
       div.className = 'slide-item';
-      div.innerHTML = `<img src="${item[3]}" class="modal-img">`;
+      const img = document.createElement('img');
+      img.src = item[3];
+      img.className = 'modal-img';
+      div.appendChild(img);
       track.appendChild(div);
     });
   }
